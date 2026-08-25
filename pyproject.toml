@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ChatAssign"
+dynamic = ["version"]
+description = "ChatArch assignment tool placeholder."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["click>=8.0", "chatstyle>=0.2.0,<0.3.0", "chatenv>=0.2.11,<0.3.0"]
+authors = [{name = "ChatArch", email = "rex@chatarch.org"}]
+keywords = ["chatassign", "chatarch", "cli"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/ChatArch/ChatAssign"
+Repository = "https://github.com/ChatArch/ChatAssign"
+Documentation = "https://arch.gh.wzhecnu.cn/ChatAssign/"
+
+[project.scripts]
+chatassign = "chatassign.cli:main"
+
+[project.entry-points."chatenv.configs"]
+chatassign = "chatassign.config"
+
+[project.optional-dependencies]
+dev = ["build", "pytest", "twine"]
+docs = ["mkdocs>=1.6,<2.0", "mkdocs-material>=9.5,<9.7", "mkdocs-static-i18n>=1.2,<2.0", "mike>=2.0,<3.0"]
+
+[tool.setuptools.dynamic]
+version = {attr = "chatassign.__version__"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools]
+include-package-data = true
