@@ -1,22 +1,22 @@
 # Capability Map
 
-Use this page to check which first-class capabilities `ChatAssign` currently owns, which ones are verified, and what remains out of scope for this package.
+Use this page to check the first-class capabilities `ChatAssign` owns, the verified boundaries, and what remains out of scope.
 
 ## Capability Groups
 
 <div class="grid cards" markdown>
 
-- **CLI Entry**
+- **Assignment Control Plane**
 
-    `chatassign --help`, `chatassign --version`, `chatassign --tree`, and `chatassign --tree-brief` are the default verification entry points.
+    Create assignment drafts from ChatEvent records and maintain policy, review, confirmation, routing, run, and timeline state.
 
-- **Python API**
+- **HTTP Service / Web**
 
-    Substantive behavior should live in importable Python functions, classes, or service layers rather than only in Click callbacks.
+    `chatassign serve` exposes assignment APIs, contracts APIs, integrations APIs, and static Web assets.
 
-- **Config and Environment**
+- **ChatBoard Handoff**
 
-    ChatEnv integration is enabled by default; stable, shared configuration belongs in `config.py`.
+    After confirmation, call a ChatBoard backend to create Task/PRD/run records and retain public links plus backend run references.
 
 </div>
 
@@ -24,12 +24,15 @@ Use this page to check which first-class capabilities `ChatAssign` currently own
 
 | Capability | Status | Notes |
 | --- | --- | --- |
-| CLI base entry | Implemented | The template generates a Click group, `--version`, shared ChatStyle tree options, and base tests. |
-| ChatEnv provider | Implemented | The template generates `config.py` and a `chatenv.configs` entry point. |
-| Business commands | Not implemented | Add these from the real package domain; do not fake future commands in the template. |
+| CLI base entry | Implemented | `--version`, `--tree`, `--tree-brief`, and `serve`. |
+| ChatEnv provider | Implemented | Config categories cover service, event, board, user-channel, resolver, and sensitive token classes. |
+| Voice trigger policy | Implemented | Drafts open for `source=voice` records whose tags match the `thought` / `sort` alias set. |
+| Zulip reply policy | Implemented | ChatAssign filters Rex/human and bot/self identity; ChatEvent only captures the topic scope. |
+| Confirmation gate | Verified | Only explicit approval text triggers ChatBoard side effects; ordinary clarification does not dispatch. |
+| ChatBoard HTTP handoff | Verified | Supports Task/PRD/run link contracts; real executor handoff requires backend executor permission. |
 
 ## Out of Scope
 
-- No plan placeholder page is generated.
-- No unimplemented capability should be written as a user operation tutorial.
-- No secret, token, cookie, or Authorization header should appear in README, docs, issues, PR comments, or CI logs.
+- Do not write voice transcripts into assignment/event reports by default.
+- Do not make ChatAssign own low-level executor processes; that belongs to the ChatBoard backend.
+- Do not expose sensitive values or authorization header contents in README, docs, issues, PR comments, or CI logs.

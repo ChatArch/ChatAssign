@@ -1,22 +1,22 @@
 # 能力地图
 
-这个页面用于校对 `ChatAssign` 当前有哪些一等能力、哪些能力已经验证，以及哪些事情不属于当前包。
+这个页面校对 `ChatAssign` 当前拥有的一等能力、已验证边界和仍然不属于当前包的范围。
 
 ## 能力分组
 
 <div class="grid cards" markdown>
 
-- **命令行入口**
+- **Assignment Control Plane**
 
-    `chatassign --help`、`chatassign --version`、`chatassign --tree` 和 `chatassign --tree-brief` 是默认可验证入口。
+    从 ChatEvent 事件创建 assignment 草案，维护 policy/review/confirmation/routing/run/timeline 状态。
 
-- **Python 接口**
+- **HTTP Service / Web**
 
-    实质能力应放到可 import 的 Python 函数、类或 service 层，而不是只写在 Click 回调里。
+    `chatassign serve` 暴露 assignment API、contracts API、integrations API 和静态 Web UI。
 
-- **配置与环境**
+- **ChatBoard Handoff**
 
-    默认接入 ChatEnv；长期、常用、跨命令共享的配置放入 `config.py`。
+    确认后调用 ChatBoard backend 创建 Task/PRD/run，并保留 public links 与 backend run reference。
 
 </div>
 
@@ -24,12 +24,15 @@
 
 | 能力 | 状态 | 说明 |
 | --- | --- | --- |
-| 命令行基础入口 | 已实现 | 模板生成 Click group、`--version`、ChatStyle 共享树选项和基础测试。 |
-| ChatEnv 配置提供者 | 已实现 | 默认生成 `config.py` 和 `chatenv.configs` 入口点。 |
-| 业务命令 | 未实现 | 按当前包真实需求补充，不能在模板里伪造未来命令。 |
+| CLI 基础入口 | 已实现 | `--version`、`--tree`、`--tree-brief`、`serve`。 |
+| ChatEnv 配置提供者 | 已实现 | 配置类别覆盖 service、event、board、user-channel、resolver 和敏感 token 类别。 |
+| Voice trigger policy | 已实现 | `source=voice` 且 tags 命中 `thought` / `sort` alias 时创建草案。 |
+| Zulip reply policy | 已实现 | ChatAssign 过滤 Rex/human 与 bot/self；ChatEvent 只负责 topic-scope capture。 |
+| Confirmation gate | 已验证 | 只有明确确认文本才触发 ChatBoard side effect，普通 clarification 不会误派发。 |
+| ChatBoard HTTP handoff | 已验证 | 支持 Task/PRD/run link contract；real executor handoff 需要 backend executor permission。 |
 
 ## 不在当前范围
 
-- 不生成计划类占位页。
-- 不把未实现能力写成用户可执行教程。
-- 不在 README、docs、issue、PR 评论或 CI log 中输出 secret、token、cookie 或 Authorization header。
+- 不把 voice transcript 默认写入 assignment/event 报告。
+- 不由 ChatAssign 直接拥有低层 executor process；低层执行属于 ChatBoard backend。
+- 不在 README、docs、issue、PR 评论或 CI log 中输出敏感值或授权头内容。

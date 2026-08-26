@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ChatAssign Control Plane</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar">
+        <div>
+          <h1>ChatAssign</h1>
+          <p class="muted">Assignment control plane</p>
+        </div>
+        <nav>
+          <button class="nav active" data-view="inbox">Inbox</button>
+          <button class="nav" data-view="review">Review</button>
+          <button class="nav" data-view="policies">Policies</button>
+          <button class="nav" data-view="routing">Routing</button>
+          <button class="nav" data-view="assignments">Assignments</button>
+          <button class="nav" data-view="integrations">Integrations</button>
+        </nav>
+        <div class="health" id="health">Loading...</div>
+      </aside>
+
+      <main>
+        <section class="toolbar">
+          <div>
+            <h2 id="view-title">Inbox</h2>
+            <p id="view-subtitle">Candidate ChatEvent items ready for policy review.</p>
+          </div>
+          <div class="actions">
+            <button id="refresh">Refresh</button>
+            <button id="create-assignment">Create Assignment</button>
+          </div>
+        </section>
+
+        <section class="grid">
+          <div class="panel span-5" id="inbox-panel">
+            <div class="panel-head">
+              <h3>Inbox</h3>
+              <span class="pill">voice-thought</span>
+            </div>
+            <div id="events" class="list"></div>
+          </div>
+
+          <div class="panel span-7" id="review-panel">
+            <div class="panel-head">
+              <h3>Review</h3>
+              <span id="selected-event-pill" class="pill muted-pill">No event</span>
+            </div>
+            <div id="review-content" class="empty">Select a candidate event.</div>
+            <div class="button-row">
+              <button id="rerun-review">Rerun Review</button>
+              <button id="mark-waiting">Ask User</button>
+              <button id="reject-assignment">Reject</button>
+            </div>
+          </div>
+
+          <div class="panel span-4" id="policies-panel">
+            <div class="panel-head">
+              <h3>Policies</h3>
+              <span class="pill">4 modes</span>
+            </div>
+            <div id="policies" class="list compact"></div>
+          </div>
+
+          <div class="panel span-4" id="routing-panel">
+            <div class="panel-head">
+              <h3>Routing / Backends</h3>
+              <span class="pill">mock adapter</span>
+            </div>
+            <div id="backends" class="list compact"></div>
+          </div>
+
+          <div class="panel span-4" id="integrations-panel">
+            <div class="panel-head">
+              <h3>Integrations</h3>
+              <span id="resolver-pill" class="pill">resolver</span>
+            </div>
+            <div id="integrations" class="list compact"></div>
+          </div>
+
+          <div class="panel span-12" id="assignments-panel">
+            <div class="panel-head">
+              <h3>Assignments / Runs</h3>
+              <span id="assignment-count" class="pill">0</span>
+            </div>
+            <div id="assignments" class="table-wrap"></div>
+          </div>
+
+          <div class="panel span-12" id="assignment-loop-panel">
+            <div class="panel-head">
+              <h3>Assignment Loop Detail</h3>
+              <span class="pill">draft · watch · links · timeline</span>
+            </div>
+            <div id="assignment-detail" class="empty">Create an assignment to inspect timeline, draft, watch, and links.</div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <script src="/app.js"></script>
+  </body>
+</html>
