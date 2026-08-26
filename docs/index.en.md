@@ -1,60 +1,29 @@
 # ChatAssign Docs
 
-ChatAssign is a ChatArch Python package. This documentation site should hold long-lived usage notes, a command map, a capability map, and Python interface entry points. After scaffolding, replace placeholders with behavior that is actually implemented, explored, or planned for this package.
+ChatAssign is the ChatArch assignment control plane for connecting ChatEvent records, user confirmation, ChatBoard backends, and executor runs into an auditable task workflow.
 
 Site entry: <https://arch.gh.wzhecnu.cn/ChatAssign/en/>
 
-## Choose Documentation by Scenario
-
-| Scenario | Document |
-| --- | --- |
-| Install the package, run the CLI, and confirm it works | [CLI Tree](cli-tree.md) |
-| Check first-class capabilities and current boundaries | [Capability Map](capability-map.md) |
-| Call package behavior directly from Python | [Python Interface Tree](interface-tree.md) |
-
 ## Documentation Organization
 
-This template keeps only durable documentation entry points; it does not generate a plan placeholder:
+- **CLI tree**: the current `chatassign` command tree, `serve` service entry, and verification commands.
+- **Capability map**: ChatEvent consumer, confirmation gate, ChatBoard handoff, and safety boundaries.
+- **Interface tree**: importable service, store, policy, and routing functions.
 
-- **CLI tree**: the most direct command entry point, including the real command tree, status, and update checklist.
-- **Capability map**: first-class capabilities, boundaries, and out-of-scope areas.
-- **Interface tree**: importable Python APIs behind the CLI.
+## Current Release Target
 
-## Primary Entry Points
+`0.1.0` promotes the verified VoiceNote assignment prototype into an installable package and local service:
 
-<div class="grid cards" markdown>
-
-- **CLI Tree**
-
-    Start from the CLI entry point and record implemented commands, command status, and interactive conventions.
-
-    [Open CLI Tree](cli-tree.md)
-
-- **Capability Map**
-
-    Review current package boundaries and avoid presenting planned work as implemented behavior.
-
-    [Open Capability Map](capability-map.md)
-
-- **Python Interface Tree**
-
-    Keep the CLI thin and put substantive behavior in importable Python APIs.
-
-    [Open Interface Tree](interface-tree.md)
-
-</div>
-
-## Documentation Status
-
-- **Implemented**: code, tests, or CLI routes exist.
-- **Verified**: covered by local smoke, CI, or real-service practice.
-- **Not implemented**: keep as boundary and planning notes only; turn into operation docs after implementation and validation.
+- `chatassign serve` starts the HTTP API and static Web UI.
+- Assignment state is written under a ChatArch-owned home.
+- Voice Event records remain metadata-only by default; ChatAssign owns trigger policy and Zulip sender filtering.
+- ChatBoard task/run side effects require the explicit confirmation gate.
 
 ## Local Preview
 
 ```bash
-python -m pip install -e ".[docs]"
+python -m pip install -e ".[dev,docs]"
+python -m pytest -q
+python tests/smoke_api.py
 mkdocs serve
 ```
-
-The Chinese home page is available at <https://arch.gh.wzhecnu.cn/ChatAssign/>. Topic pages without English translations fall back to the default Chinese content through the i18n plugin.

@@ -1,23 +1,43 @@
 # Python 接口树
 
-`ChatAssign` 的 CLI 应保持薄入口；实质能力应放在可 import 的 Python 函数、类或 service 层里。
+`ChatAssign` 的 CLI 保持薄入口；实质能力由 `chatassign.server` 提供，方便服务、测试和未来 adapter 复用。
 
 ## 包入口
 
 ```python
 from chatassign import __version__
+from chatassign.server import build_server, Store
 ```
 
-## 待补接口
+## 服务入口
 
 ```text
 chatassign
-├── cli.py          # Click 入口，只做参数解析和输出
-└── <service>.py    # 放包的核心可调用能力
+├── cli.py             # Click 入口；注册 --version/--tree/serve
+├── config.py          # ChatEnv config provider
+└── server.py          # HTTP service、state store、policy/review/router/run handoff
 ```
 
-## 更新清单
+## 关键 API
 
-- 每个实质 CLI 命令都要能映射到 importable API。
-- 文档里的函数签名应和代码一致。
-- 对外输出默认不要泄漏 token、cookie、内部 URL 或人员信息。
+```python
+from chatassign.server import (
+    Store,
+    build_server,
+    create_assignment,
+    route_assignment,
+    refine_from_reply,
+    confirm_assignment,
+    complete_assignment,
+    voice_event_matches_policy,
+    zulip_event_from_rex,
+)
+```
+
+## 状态与安全边界
+
+- `Store` 默认将 assignment、policy、backend、run 和 project artifacts 写入 ChatArch-owned home。
+- `voice_event_matches_policy()` 只看 metadata/source/tags，不要求 voice transcript。
+- `zulip_event_from_rex()` 属于 ChatAssign consumer policy，避免把 sender filtering 放进 ChatEvent capture 层。
+- `confirm_assignment()` 是 ChatBoard task/run side effect 的入口；确认语义由 `is_confirmation_text()` 严格判断。
+- `_dispatch_to_chatboard_http()` 通过 ChatBoard API handoff，低层 executor process 继续由 ChatBoard backend 拥有。

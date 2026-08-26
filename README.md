@@ -12,54 +12,45 @@
 
 <div align="center">
 
-[英文版](README.en.md) | [简体中文](README.md)
+[English](README.en.md) | [简体中文](README.md)
 </div>
 
 # ChatAssign
 
-ChatArch assignment tool placeholder.
-
+ChatAssign 是 ChatArch 的 assignment control-plane：它把 ChatEvent 事件转成需要确认的任务草案，经用户确认后路由到 ChatBoard 后端创建 Task/PRD 并启动受控 executor run。
 
 文档入口：<https://arch.gh.wzhecnu.cn/ChatAssign/>
-
-按场景选择文档：
-
-| 场景 | 文档 |
-| --- | --- |
-| 第一次安装、运行命令行、确认包可用 | [CLI 树](docs/cli-tree.md) |
-| 校对当前包有哪些一等能力和边界 | [能力地图](docs/capability-map.md) |
-| 从 Python 代码调用包能力 | [接口树](docs/interface-tree.md) |
 
 ## 快速开始
 
 ```bash
-pip install -e ".[dev]"
+pip install ChatAssign
 chatassign --help
 chatassign --version
-chatassign --tree
 chatassign --tree-brief
+chatassign serve --host 127.0.0.1 --port 8765
+```
+
+## 当前能力
+
+- 消费 metadata-only ChatEvent voice 事件，并按 `thought` / `sort` trigger alias 建立 assignment 草案。
+- 维护确认优先的 assignment 状态机，只有明确确认后才创建 ChatBoard 任务或启动 run。
+- 消费 assignment topic 内的 Zulip reply 事件，并由 ChatAssign 自己执行 Rex/human 与 bot/self 过滤。
+- 通过 ChatBoard HTTP backend 创建 Task/PRD/run，并支持 mock、dry-run 或 backend 授权后的 real executor handoff。
+- 将 assignment state、review、PRD、prompt、run reference 和 timeline 写入 ChatArch-owned home。
+
+## 服务边界
+
+`chatassign serve` 启动本地 HTTP service。长期凭据和值应放在 ChatEnv/运行环境中；公开 README 和 docs 只描述配置类别，不展示敏感值或连接串。
+
+## 开发
+
+```bash
+python -m pip install -e ".[dev,docs]"
 python -m pytest -q
+python tests/smoke_api.py
+mkdocs build --strict
 python -m build
 ```
 
-## 命令行规范
-
-这个模板默认依赖 `chatstyle>=0.2.0,<0.3.0` 和 `chatenv>=0.2.11,<0.3.0`，新增命令应优先使用：
-
-- `add_tree_option()` 提供共享的 `--tree` / `--tree-brief`，`render_click_tree()` 从已注册 Click 元数据生成命令树。
-- `CommandSchema` / `CommandField` 描述输入。
-- `add_interactive_option()` 提供统一 `-i/-I`。
-- `resolve_command_inputs()` 统一缺参补问、默认值、TTY 与校验。
-- 默认生成 `config.py` 和 `chatenv.configs` 入口点，使包可被 ChatEnv 发现；只有明确不需要 ChatEnv 接入时才使用 `--without-chatenv-provider`。
-
-## 目录结构
-
-- `src/`：包源码
-- `tests/code-tests/`：代码测试和历史测试迁移
-- `tests/cli-tests/`：真实 CLI 测试，doc-first
-- `tests/mock-cli-tests/`：mock/fake CLI 测试，doc-first
-- `docs/`：长期维护文档，由 mkdocs 构建
-
-## 开发说明
-
-扩展脚手架前，先阅读 `DEVELOP.md` 和 `AGENTS.md`。
+扩展前请阅读 `AGENTS.md` 和 docs 中的能力/接口边界。

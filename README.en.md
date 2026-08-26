@@ -17,49 +17,40 @@
 
 # ChatAssign
 
-ChatArch assignment tool placeholder.
-
+ChatAssign is the ChatArch assignment control plane. It turns ChatEvent records into confirmation-gated assignment drafts, then routes confirmed work to a ChatBoard backend for Task/PRD creation and controlled executor runs.
 
 Documentation entry: <https://arch.gh.wzhecnu.cn/ChatAssign/en/>
-
-Choose documentation by scenario:
-
-| Scenario | Document |
-| --- | --- |
-| Install the package, run the CLI, and confirm it works | `docs/cli-tree.en.md` |
-| Check first-class capabilities and current boundaries | `docs/capability-map.en.md` |
-| Call package behavior directly from Python | `docs/interface-tree.md` |
 
 ## Quick Start
 
 ```bash
-pip install -e ".[dev]"
+pip install ChatAssign
 chatassign --help
 chatassign --version
-chatassign --tree
 chatassign --tree-brief
+chatassign serve --host 127.0.0.1 --port 8765
+```
+
+## Current Capabilities
+
+- Consume metadata-only ChatEvent voice records and open assignment drafts for `thought` / `sort` trigger aliases.
+- Maintain a confirm-first assignment state machine; ChatBoard task/run side effects happen only after explicit confirmation.
+- Consume Zulip reply events from an assignment topic while ChatAssign owns Rex/human and bot/self filtering.
+- Create ChatBoard Task/PRD/run records through the ChatBoard HTTP backend, including mock, dry-run, and authorized real executor handoff.
+- Persist assignment state, review, PRD, prompt, run references, and timeline under a ChatArch-owned home.
+
+## Service Boundary
+
+`chatassign serve` starts the local HTTP service. Long-lived credentials and runtime values belong in ChatEnv or process-owned runtime configuration. Public README/docs describe configuration categories only and must not include sensitive values.
+
+## Development
+
+```bash
+python -m pip install -e ".[dev,docs]"
 python -m pytest -q
+python tests/smoke_api.py
+mkdocs build --strict
 python -m build
 ```
 
-## CLI Contract
-
-This template depends on `chatstyle>=0.2.0,<0.3.0` and `chatenv>=0.2.11,<0.3.0`. New commands should prefer:
-
-- `add_tree_option()` for shared `--tree` / `--tree-brief` flags and `render_click_tree()` to render registered Click metadata.
-- `CommandSchema` / `CommandField` for inputs.
-- `add_interactive_option()` for the shared `-i/-I` switch.
-- `resolve_command_inputs()` for missing args, defaults, TTY behavior, and validation.
-- Generate `config.py` and a `chatenv.configs` entry point by default so the package is ChatEnv-discoverable; use `--without-chatenv-provider` only when ChatEnv integration is intentionally not needed.
-
-## Layout
-
-- `src/`: package source code
-- `tests/code-tests/`: code tests and migrated historical tests
-- `tests/cli-tests/`: real CLI tests, doc-first
-- `tests/mock-cli-tests/`: mock/fake CLI tests, doc-first
-- `docs/`: long-lived project docs built by mkdocs
-
-## Development Notes
-
-See `DEVELOP.md` and `AGENTS.md` before expanding the scaffold.
+Read `AGENTS.md` and the docs capability/interface boundaries before extending the package.

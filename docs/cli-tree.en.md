@@ -1,50 +1,38 @@
 # CLI Capability Map
 
-This page is the compact capability map for the `ChatAssign` CLI. Use it to review which commands are first-class entries and which are still boundary or planned slots. After scaffolding, update it with the real command tree; do not present unimplemented commands as available operations.
-
-Importable Python functions are mapped in [Interface Tree](interface-tree.md). Current package boundaries are tracked in [Capability Map](capability-map.md).
+`chatassign` is the command-line entry for the ChatAssign service. It currently exposes package verification and local HTTP service startup.
 
 ## Top-Level Commands
 
 ```text
-chatassign                  # ChatAssign command-line entry
+chatassign                  # ChatAssign assignment control-plane CLI
 ├── --help                     # Show CLI help and registered commands
 ├── --version                  # Print the current package version
 ├── --tree                     # Print the registered CLI tree with parameter signatures
-└── --tree-brief               # Print command nodes and descriptions without signatures
+├── --tree-brief               # Print command nodes and descriptions without signatures
+└── serve                      # Start the ChatAssign HTTP service
 ```
 
-## Base Entries
+## Service Command
 
 ```text
-chatassign --help           # Verify the command is installed and inspect the current command tree
-chatassign --version        # Verify the installed version
-chatassign --tree           # Read back the CLI contract with parameter signatures
-chatassign --tree-brief     # Read back command nodes and descriptions only
+chatassign serve --host 127.0.0.1 --port 8765
+chatassign serve --home <chatarch-owned-home>
 ```
 
-`--help`, `--version`, `--tree`, and `--tree-brief` are the scaffolded verification entries. ChatStyle's `add_tree_option()` provides both tree flags: the default tree keeps parameter signatures, while the brief tree keeps only command nodes and descriptions. After adding business commands, follow the ChatTea CLI tree pattern: split command groups into their own sections and annotate every command line.
+`serve` loads ChatAssign state, policy/backend configuration, HTTP APIs, and static Web assets. Credentials are supplied by ChatEnv or process-owned runtime configuration; public docs describe configuration categories and never include secret values.
 
-## Business Command Slots
+## Verification Commands
 
-```text
-chatassign <group>          # Command group named after real package capability
-├── <command>                  # Explain what this command does
-└── <command>                  # Explain status, boundary, or checkpoint behavior
+```bash
+chatassign --version
+chatassign --tree-brief
+chatassign serve --help
+python tests/smoke_api.py
 ```
-
-This is a structural placeholder, not a promise of future capability. Only document a command as implemented after the command, Python function, and tests exist.
-
-## Status Contract
-
-| Status | Meaning |
-| --- | --- |
-| Implemented | Command, function, and tests exist |
-| Verified | Covered by CI, local smoke, or real-service practice |
-| Planned / checkpoint | Keep only boundary notes; do not write operation tutorials before implementation |
 
 ## Implementation Contract
 
-- Every implemented command must map back to a Python function, class, or service layer.
-- If a command writes remote state, document credentials, permissions, dry-run/checkpoint behavior, or confirmation boundaries.
-- When adding a command, update README, the interface tree, capability map, tests, and related flow pages together.
+- The CLI stays thin; substantive behavior is importable from `chatassign.server`.
+- Any ChatBoard task/run side effect must pass the explicit confirmation gate.
+- Real executor handoff requires backend-local executor permission; mock/dry-run remains available for safe demos.
